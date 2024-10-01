@@ -2,9 +2,9 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-from models import Book, Base
-from schemas import BookBase, BookCreate, BookInDB, BookUpdate
-from db import engine, get_db
+from .models import Book, Base  # Ensure you use a dot for relative import if in a package
+from .schemas import BookBase, BookCreate, BookInDB, BookUpdate  # Adjust the path as necessary
+from .db import engine, get_db  # Adjust the path as necessary
 
 Base.metadata.create_all(bind=engine)
 
