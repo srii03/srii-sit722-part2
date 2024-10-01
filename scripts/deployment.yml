@@ -1,1 +1,55 @@
-# Write Kubernetes Deployment Script
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog
+  labels:
+    app: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+      - name: book-catalog
+        image: srii010/book-catalog:latest # Update this to your image
+        ports:
+        - containerPort: 8000 # Change to your application port
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://user:password@postgres:5432/books" # Update to your DB connection
+        readinessProbe:
+          httpGet:
+            path: /health # Adjust this path based on your application's health check
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /health # Same here
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog
+spec:
+  selector:
+    app: book-catalog
+  ports:
+  - port: 80
+    targetPort: 8000 # Map service port to container port
+  type: ClusterIP # Use LoadBalancer or NodePort if needed
