@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+# Define your Pydantic models here
+
 class BookBase(BaseModel):
     title: str
     author: str
@@ -8,11 +10,14 @@ class BookBase(BaseModel):
 class BookCreate(BookBase):
     pass
 
-class BookUpdate(BookBase):
-    pass
-
 class BookInDB(BookBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # Change 'orm_mode' to 'from_attributes'
+
+class BookUpdate(BaseModel):
+    title: str = None
+    author: str = None
+    year: int = None
+
